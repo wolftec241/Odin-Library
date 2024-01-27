@@ -1,0 +1,95 @@
+:root{
+    --rem: 16;
+    --dashboard-color: #38bdf8;
+    --header-color:#fafaf9;
+    --main-color: #e7e5e4;
+     --gray-m: #78716c;
+    --background-color: #333;
+     --shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+}
+
+header, footer {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+}
+
+header{
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    gap: 50px;
+    box-shadow: var(--shadow);
+    padding: 1.2rem;
+}
+
+footer{
+    text-align: center;
+}
+
+.logo{
+    font-size: 4vh;
+    font-weight: bold;
+    align-self: center;
+    margin: 0;
+    margin-left: 0.5rem;
+}
+
+.adding{
+    display: flex;
+    gap: 1.1rem;
+}
+
+.addingBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1rem;
+    width: 1rem;
+    font-size: 2rem;
+    font-weight: 600;
+    border-radius: 50%;
+    padding: 1.5rem;
+    transition: filter 0.15s ease-in-out;
+    border: none; 
+    cursor: pointer;
+    background-color: var(--main-color);
+}
+
+.addingBtn:hover{
+    filter: brightness(90%);
+}
+
+
+main{
+    background-color: var(--main-color);
+    flex-grow: 1; 
+    overflow-y: scroll;
+    
+    max-height: 80.4vh;
+    padding: 0.5rem;
+}
+
+
+#bookList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.book {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    min-height: 10rem;
+}
+
