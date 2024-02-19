@@ -9,9 +9,9 @@
 <body>
     <!-- Header -->
     <header>
-        <h2 class="logo"> Library </h2>
+        <h2 class="logo">Library</h2>
         <div class="adding">
-            <button class="addingBtn">+</button>
+            <button class="addingBtn" onclick="openModal()">+</button>
         </div>
     </header>
 
@@ -22,6 +22,30 @@
         </section>
     </main>
 
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Add a New Book</h2>
+            <form id="addBookForm" onsubmit="addBook(); return false;">
+                <label for="title">Title:</label>
+                <input type="text" id="title" required>
+
+                <label for="author">Author:</label>
+                <input type="text" id="author" required>
+
+                <label for="pages">Number of Pages:</label>
+                <input type="number" id="pages" required>
+
+                <label for="read">Have you read this book?</label>
+                <input type="checkbox" id="read">
+
+                <button type="submit">Add Book</button>
+            </form>
+        </div>
+    </div>
+
+
     <!-- Footer -->
     <footer>
         <p>&copy; 2024 Library</p>
@@ -29,7 +53,6 @@
 
     <!-- JavaScript -->
     <script src="./Js/script.js"></script>
-
 
 </body>
 </html>
