@@ -73,62 +73,72 @@ class myDOM {
     }
 
     displayBook(book) {
-        console.log("Displaying book:", book);
-        const bookElement = document.createElement("div");
-        bookElement.classList.add("book");
+    console.log("Displaying book:", book);
+    const bookElement = document.createElement("div");
+    bookElement.classList.add("book");
 
-        const deleteBtd = document.createElement("span");
-        deleteBtd.classList.add("close");
-        deleteBtd.innerHTML = "&times;";
+    const deleteBtd = document.createElement("span");
+    deleteBtd.classList.add("close");
+    deleteBtd.innerHTML = "&times;";
 
-        const Title = document.createElement("h3");
-        const Author = document.createElement("p");
-        const Pages = document.createElement("p");
-        const Read_status = document.createElement("div");
+    const Title = document.createElement("h3");
+    const Author = document.createElement("p");
+    const Pages = document.createElement("p");
+    const Read_status = document.createElement("div");
 
-        const Read_slider = document.createElement("label");
-        const checkBox = document.createElement("input");
-        const slider = document.createElement("span");
+    const Read_slider = document.createElement("label");
+    const checkBox = document.createElement("input");
+    const slider = document.createElement("span");
 
-        const markAsReadText = document.createElement("p");
-        markAsReadText.textContent = "Mark as Read:";
-        Read_status.appendChild(markAsReadText);
+    const markAsReadText = document.createElement("p");
+    markAsReadText.textContent = "Mark as Read:";
+    Read_status.appendChild(markAsReadText);
 
-        Read_status.classList.add("read_status");
-        Read_slider.classList.add("read_slider");
-        slider.classList.add("slider");
-        checkBox.type = "checkbox";
-        Read_slider.appendChild(checkBox);
-        Read_slider.appendChild(slider);
-        Read_status.appendChild(Read_slider);
+    Read_status.classList.add("read_status");
+    Read_slider.classList.add("read_slider");
+    slider.classList.add("slider");
+    checkBox.type = "checkbox";
+    Read_slider.appendChild(checkBox);
+    Read_slider.appendChild(slider);
+    Read_status.appendChild(Read_slider);
 
-        Title.textContent = `Title: ${book.Title}`;
-        Author.textContent = `Author: ${book.Author}`;
-        Pages.textContent = `Number of pages: ${book.Number_of_pages}`;
+    Title.textContent = `Title: ${book.Title}`;
+    Author.textContent = `Author: ${book.Author}`;
+    Pages.textContent = `Number of pages: ${book.Number_of_pages}`;
 
-        checkBox.checked = book.Read_status;
-        const setCardColor = () => {
-            book.setRead_status(checkBox.checked);
-            if (book.Read_status) {
-                bookElement.classList.remove("not_finish");
-            } else {
-                bookElement.classList.add("not_finish");
-            }
-        };
-        setCardColor();
+    checkBox.checked = book.Read_status;
+    const setCardColor = () => {
+        book.setRead_status(checkBox.checked);
 
-        checkBox.addEventListener("change", () => setCardColor());
+        // Update localStorage with the new status
+        const books = this.loadBooksFromStorage();
+        const index = books.findIndex(b => b.Title === book.Title); // Find the correct book
+        if (index !== -1) {
+            books[index].Read_status = checkBox.checked;
+            this.saveBooksToStorage(books); // Save updated books to storage
+        }
 
-        bookElement.appendChild(deleteBtd);
-        bookElement.appendChild(Title);
-        bookElement.appendChild(Author);
-        bookElement.appendChild(Pages);
-        bookElement.appendChild(Read_status);
+        if (book.Read_status) {
+            bookElement.classList.remove("not_finish");
+        } else {
+            bookElement.classList.add("not_finish");
+        }
+    };
+    setCardColor();
 
-        this.bookListSection.appendChild(bookElement);
+    checkBox.addEventListener("change", () => setCardColor());
 
-        deleteBtd.addEventListener("click", () => this.deleteBook(book));
-    }
+    bookElement.appendChild(deleteBtd);
+    bookElement.appendChild(Title);
+    bookElement.appendChild(Author);
+    bookElement.appendChild(Pages);
+    bookElement.appendChild(Read_status);
+
+    this.bookListSection.appendChild(bookElement);
+
+    deleteBtd.addEventListener("click", () => this.deleteBook(book));
+}
+
 
     deleteBook(bookToDelete) {
         const books = this.loadBooksFromStorage();
