@@ -26,21 +26,11 @@ class Book {
     }
 }
 
-class Library {
-    constructor() {
-        this.allBooksList = [];
-    }
-
-    addBookToLibrary(book) {
-        this.allBooksList.push(book);
-        console.table(this.allBooksList);
-    }
-}
 
 class myDOM {
     constructor() {
         this.bookListSection = document.getElementById("bookList");
-        this.library = new Library();
+        document.addEventListener('DOMContentLoaded', () => this.displayAllBooks());
     }
 
     addBook() {
@@ -48,68 +38,62 @@ class myDOM {
         const author = document.getElementById("author").value;
         const pages = document.getElementById("pages").value;
         const read = document.getElementById("read").checked;
-    
-        // Validate input (you can add more validation as needed)
-        if ((!title || !author || !pages)){
+
+        if (!title || !author || !pages) {
             alert("Please fill in all fields.");
             return;
         }
-    
-        // Add the book to your library and display
-        let newBook = new Book(title, author, parseInt(pages), read); 
-        this.library.addBookToLibrary(newBook);
-        this.displayBook(newBook);
-        
-        // Close the modal
-        this.closeModal();
-    
-        // Reset the form
+
+        const newBook = new Book(title, author, parseInt(pages), read);
+
+        const books = this.loadBooksFromStorage();
+        books.push(newBook);
+        this.saveBooksToStorage(books);
+
+        this.displayAllBooks();
+
         document.getElementById("addBookForm").reset();
+        this.closeModal();
     }
 
     openModal() {
         document.getElementById("myModal").style.display = "block";
     }
-    
+
     closeModal() {
         document.getElementById("myModal").style.display = "none";
     }
 
-    windowClick(event) {
-        const modal = document.getElementById("myModal");
-        if (event.target === modal) {
-            this.closeModal();
-        }
-    }
-
     displayAllBooks() {
-        this.bookListSection.innerHTML = "";
-        this.library.allBooksList.forEach(book => {
-            this.displayBook(book);
-        });
+        console.log("displayAllBooks called");
+        this.bookListSection.innerHTML = ""; // Clear existing content
+        const books = this.loadBooksFromStorage();
+        console.log("Books loaded from storage:", books);
+        books.forEach(book => this.displayBook(book));
     }
 
     displayBook(book) {
+        console.log("Displaying book:", book);
         const bookElement = document.createElement("div");
         bookElement.classList.add("book");
-    
+
         const deleteBtd = document.createElement("span");
         deleteBtd.classList.add("close");
         deleteBtd.innerHTML = "&times;";
-    
+
         const Title = document.createElement("h3");
         const Author = document.createElement("p");
         const Pages = document.createElement("p");
         const Read_status = document.createElement("div");
-      
+
         const Read_slider = document.createElement("label");
         const checkBox = document.createElement("input");
         const slider = document.createElement("span");
-    
+
         const markAsReadText = document.createElement("p");
         markAsReadText.textContent = "Mark as Read:";
         Read_status.appendChild(markAsReadText);
-    
+
         Read_status.classList.add("read_status");
         Read_slider.classList.add("read_slider");
         slider.classList.add("slider");
@@ -117,62 +101,60 @@ class myDOM {
         Read_slider.appendChild(checkBox);
         Read_slider.appendChild(slider);
         Read_status.appendChild(Read_slider);
-    
+
         Title.textContent = `Title: ${book.Title}`;
         Author.textContent = `Author: ${book.Author}`;
         Pages.textContent = `Number of pages: ${book.Number_of_pages}`;
-    
-        checkBox.checked = book.Read_status; // Set checkbox state based on book data
-        let setCardColor = function(){
+
+        checkBox.checked = book.Read_status;
+        const setCardColor = () => {
             book.setRead_status(checkBox.checked);
-            if(book.Read_status){// If book mark as Read change color
+            if (book.Read_status) {
                 bookElement.classList.remove("not_finish");
-            }
-            else{
+            } else {
                 bookElement.classList.add("not_finish");
             }
-        }
+        };
         setCardColor();
-    
-        checkBox.addEventListener('change', function () {
-            setCardColor();
-        });
-    
+
+        checkBox.addEventListener("change", () => setCardColor());
+
         bookElement.appendChild(deleteBtd);
         bookElement.appendChild(Title);
         bookElement.appendChild(Author);
         bookElement.appendChild(Pages);
         bookElement.appendChild(Read_status);
-    
+
         this.bookListSection.appendChild(bookElement);
-        
-        deleteBtd.addEventListener("click", () => {
-            this.deleteBook(book);
-        });
+
+        deleteBtd.addEventListener("click", () => this.deleteBook(book));
     }
 
     deleteBook(bookToDelete) {
-        const index = this.library.allBooksList.findIndex(book => book === bookToDelete);
+        const books = this.loadBooksFromStorage();
+        const index = books.findIndex(book => book.Title === bookToDelete.Title);
 
         if (index !== -1) {
-            this.library.allBooksList.splice(index, 1);
-        }
-
-        const bookElementToDelete = Array.from(this.bookListSection.children).find(element => {
-            const titleElement = element.querySelector("h3");
-            return titleElement && titleElement.textContent.includes(bookToDelete.Title);
-        });
-
-        if (bookElementToDelete) {
-            this.bookListSection.removeChild(bookElementToDelete);
+            books.splice(index, 1);
+            this.saveBooksToStorage(books);
         }
 
         this.displayAllBooks();
     }
+
+    saveBooksToStorage(books) {
+        localStorage.setItem("libraryBooks", JSON.stringify(books));
+    }
+
+    loadBooksFromStorage() {
+        const storedBooks = localStorage.getItem("libraryBooks");
+        console.log("Stored Books Raw Data:", storedBooks);
+        const books = storedBooks ? JSON.parse(storedBooks) : [];
+        return books.map(book => new Book(book.Title, book.Author, book.Number_of_pages, book.Read_status));
+    }
 }
 
 const myDomInstance = new myDOM();
-
 
 function openModal() {
     myDomInstance.openModal();
@@ -185,3 +167,4 @@ function closeModal() {
 function addBook() {
     myDomInstance.addBook();
 }
+
